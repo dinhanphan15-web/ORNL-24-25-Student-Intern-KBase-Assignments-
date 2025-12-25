@@ -1,0 +1,57 @@
+This script was used to compile summary statistics for Metagenome-Assembled Genomes (MAGs). 
+
+pip install pandas openpyxl
+
+import os
+import json
+import pandas as pd
+
+json_folder = "OK584_json_files"
+
+summary_data = {}
+
+for filename in os.listdir(json_folder):
+    if filename.endswith(".json"):
+        filepath = os.path.join(json_folder, filename)
+        with open(filepath, "r") as f:
+            data = json.load(f)
+
+        try:
+            assembly_name = data['assembly_id']  # May vary, check the file!
+            n_contigs = data.get('num_contigs')
+            gc_content = data.get('gc_content')
+            dna_size = data.get('dna_size')
+
+            summary_data[assembly_name] = {
+                "N_Contigs": n_contigs,
+                "GC_Content (%)": gc_content * 100 if gc_content is not None else None,
+                "Total_Size_bp": dna_size
+            }
+
+        except KeyError as e:
+            print(f"Skipping {filename}: missing key {e}")
+
+df = pd.DataFrame.from_dict(summary_data, orient='index')
+df.index.name = "Assembly_Name"
+
+df.to_excel("MAG_summary_stats.xlsx")
+print("Summary exported to MAG_summary_stats.xlsx")
+
+permids = [
+    '224074/2/2', '224074/3/2', '224074/4/2', '224074/5/2', '224074/6/2',
+    '224074/7/2', '224074/8/2', '224074/9/2', '224074/10/2', '224074/11/2',
+    '224074/12/2', '224074/13/2', '224074/14/2', '224074/15/2', '224074/16/2',
+    '224074/17/2', '224074/18/2', '224074/19/2', '224074/20/2', '224074/21/2',
+    '224074/22/2', '224074/23/2', '224074/24/2', '224074/25/2', '224074/26/2',
+    '224074/27/4', '224074/28/4', '224074/29/4', '224074/30/4', '224074/31/2',
+    '224074/32/2', '224074/33/2', '224074/34/1', '224074/35/1', '224074/36/1',
+    '224074/37/1', '224074/38/1', '224074/39/1', '224074/40/1', '224074/41/1',
+    '224074/42/1', '224074/43/1', '224074/44/3', '224074/45/1', '224074/46/1'
+]
+
+batch_params = [{
+    "input_ref": i,
+    "destination_dir": "workspace_export",
+    "format": "legacy_data_import_export"
+} for i in permids]
+
