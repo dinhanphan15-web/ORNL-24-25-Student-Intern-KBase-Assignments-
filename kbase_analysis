@@ -1,4 +1,4 @@
-KBase provides JSON-formatted metadata for Metagenome-Assembled Genomes. This script extracts and summarizes key genomic features across multiple MAGs.
+#This script processesses Kaiju taxonomic classification reports to summarize read distributions across taxonomic levels. Using this data, you are able to compare regular vs longtail Kaiju reports.  
 
 import os
 import re
