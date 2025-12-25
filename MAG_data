@@ -17,7 +17,7 @@ for filename in os.listdir(json_folder):
             data = json.load(f)
 
         try:
-            assembly_name = data['assembly_id']  # May vary, check the file!
+            assembly_name = data['assembly_id']  
             n_contigs = data.get('num_contigs')
             gc_content = data.get('gc_content')
             dna_size = data.get('dna_size')
